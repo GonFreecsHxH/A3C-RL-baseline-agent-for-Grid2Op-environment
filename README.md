@@ -8,7 +8,7 @@ This is a python module that contains the A3C RL baseline agent for [Grid2Op](ht
 
 ## Authors
 
-Authors: Kishan Prudhvi Guddanti, Amarsagar Reddy Ramapuram Matavalam, Yang Weng
+Authors: 
 
 ## Installation
 
