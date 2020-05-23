@@ -40,8 +40,17 @@ pip install dill
 ### Using [L2RPN Baselines](https://github.com/rte-france/l2rpn-baselines/tree/master/l2rpn_baselines).
 ```python
 import grid2op
-from l2rpn_baselines.A3CAgent import train
+from l2rpn_baselines.A3CAgent import train ??
 ```
+
+### Using the direct github repo without L2RPN Baselines ??
+
+### Important file descriptions.
+"train.py" - Trains the RL agent.
+
+"evaluate.py" - Evaluates the RL agent.
+
+"run_grid2viz.py" - Visualizes the detailed performance of RL agent under various episodes (scenarios).
 
 ## License
 ???
