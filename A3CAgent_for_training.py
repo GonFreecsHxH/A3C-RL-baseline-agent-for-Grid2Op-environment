@@ -1,20 +1,25 @@
-import grid2op
-import threading
-import numpy as np
-import time
-import json
-import copy
-from grid2op import make
-from grid2op.Agent import MLAgent
-from grid2op.Environment import Environment
-from grid2op.Parameters import Parameters
-from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
+try:
+    import grid2op
+    import threading
+    import numpy as np
+    import time
+    import json
+    import copy
+    from grid2op import make
+    from grid2op.Agent import MLAgent
+    from grid2op.Environment import Environment
+    from grid2op.Parameters import Parameters
+    from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
 
-import tensorflow as tf
-from tf.keras.layers import Dense, Input
-from keras.models import Model
-from keras.optimizers import Adam
-from keras import backend as K
+    import tensorflow as tf
+    from tf.keras.layers import Dense, Input
+    from keras.models import Model
+    from keras.optimizers import Adam
+    from keras import backend as K
+ except Importerror:
+    raise RuntimeError("You need the XXX package to train the A3C baselines")
+ end
+        
 
 
 # Create the Agent instance here that can used with the Runner to test the performance of the trained RL agent.
