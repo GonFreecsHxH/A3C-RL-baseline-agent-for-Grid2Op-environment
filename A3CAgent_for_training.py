@@ -11,7 +11,7 @@ from grid2op.Parameters import Parameters
 from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
 
 import tensorflow as tf
-from keras.layers import Dense, Input
+from tf.keras.layers import Dense, Input
 from keras.models import Model
 from keras.optimizers import Adam
 from keras import backend as K
