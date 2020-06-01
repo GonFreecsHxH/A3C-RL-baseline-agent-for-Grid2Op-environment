@@ -1,12 +1,13 @@
 from grid2op import make
 import numpy as np
-from A3CAgent_for_training import *
-# from A3CAgent_for_training import Agent as local_agent_class
-import Action_reduced_list
 from grid2op.Parameters import Parameters
 from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
 
+from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+import l2rpn_baselines.Multithreading_agent.Action_reduced_list
 
+# from ActorCritic_Agent import *
+# import Action_reduced_list
 
 def set_environement(start_id,env_name,profiles_chronics):
     param = Parameters()
@@ -49,12 +50,7 @@ def useful_state(obs,value_multiplier):
     # selected_obs = np.hstack((selected_obs,obs.day_of_week/7))
     return selected_obs
 
-if __name__ == "__main__":
-    nn_weights_name = "grid2op_14_a3c"
-    env_name = 'l2rpn_case14_sandbox'
-    profiles_chronics = r"C:\Users\kisha\data_grid2op\l2rpn_case14_sandbox\chronics"
-    EPISODES_train = 500
-    time_step_end = 3000
+def train(nn_weights_name,env_name,profiles_chronics,EPISODES_train,time_step_end,Hyperparameters,Thread_count):
 
     env = set_environement(None, env_name, profiles_chronics)
     # Define the size of state space and action space.
@@ -74,8 +70,51 @@ if __name__ == "__main__":
     action_space = env.action_space
     del env
 
+    # Get the action space details as lists.
     action_space_lists = [gen_action_list, load_action_list, line_or_action_list, line_ex_action_list]
 
-    global_agent = A3CAgent(state_size, action_size,env_name,action_space,value_multiplier,action_space_lists,profiles_chronics,EPISODES_train,time_step_end)
+    # Create an agent architecture.
+    global_agent = A3CAgent(state_size, action_size,env_name,action_space,value_multiplier,action_space_lists,
+                            profiles_chronics,EPISODES_train,time_step_end,Hyperparameters,Thread_count,train_flag=True)
+
+    # Print model summary
+    global_agent.actor.summary()
+    global_agent.critic.summary()
+
+    # Load the agent with trained neural network weights.
+    try:
+        global_agent.load_model(nn_weight_name=nn_weights_name)
+        print("Loaded saved NN model parameters \n")
+    except:
+        print("Issue with loading the NN weights/No existing model is found or saved model sizes do not match. Exiting...\n")
+        exit()
 
     global_agent.train(nn_weights_name)
+
+if __name__ == "__main__":
+    # Name of the ".h5" files that stores the actor and critic neural network weights.
+    nn_weights_name = "grid2op_14_a3c"
+    # Name of the Grid2Op environment to train the A3C RL agent on.
+    env_name = 'l2rpn_case14_sandbox'
+    # Location of the chronic files
+    profiles_chronics = r"C:\Users\kisha\data_grid2op\l2rpn_case14_sandbox\chronics"
+    # Total number of episodes to train the A3C agent.
+    EPISODES_train = 500
+    # Maximum number of time steps or iterations taken in each episode during the training.
+    time_step_end = 3000
+    # Number of parallel workers or threads to train the A3C agent.
+    Thread_count = 7
+
+    # Neural network architecture hyper parameters. For more details on structure see the ".summary()" that will be
+    # printed when running this code.
+    Hyperparameters = {}
+    Hyperparameters["actor_learning_rate"] = 0.0003
+    Hyperparameters["critic_learning_rate"] = 0.0003
+    Hyperparameters["discount_factor"] = 0.95
+    Hyperparameters["size_of_hidden_layer_1"] = 200
+    Hyperparameters["size_of_hidden_layer_2"] = 100
+
+    # Train function that trains the A3C agent.
+    train(nn_weights_name,env_name,profiles_chronics,EPISODES_train,time_step_end,Hyperparameters,Thread_count)
+
+

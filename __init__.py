@@ -1,9 +1,15 @@
 __all__ = [
-    "A3C_NN",
+    "ActorCritic_Agent",
     "evaluate",
-    "train"
+    "train",
+    "Action_reduced_list",
+    "Runner",
+    "run_grid2viz"
 ]
 
-from l2rpn_baselines.A3C_NN.A3C_NN import A3C_NN
-from l2rpn_baselines.A3C_NN.evaluate import evaluate
-from l2rpn_baselines.A3C_NN.train import train
+from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import ActorCritic_Agent
+from l2rpn_baselines.Multithreading_agent.evaluate import evaluate
+from l2rpn_baselines.Multithreading_agent.train import train
+from l2rpn_baselines.Multithreading_agent.Action_reduced_list import Action_reduced_list
+from l2rpn_baselines.Multithreading_agent.Runner import Runner
+from l2rpn_baselines.Multithreading_agent.run_grid2viz import run_grid2viz

@@ -3,12 +3,14 @@ from grid2op.Reward import L2RPNReward
 from grid2op.Reward import CombinedReward, CloseToOverflowReward, GameplayReward
 from grid2op.Observation import CompleteObservation
 import numpy as np
-# from l2rpn_baselines.A3C_NN import Action_reduced_list
-# from l2rpn_baselines.A3C_NN import Runner
-# from l2rpn_baselines.A3C_NN import A3CAgent_for_runner as A3CAgent
-import Runner
-import Action_reduced_list
-import A3CAgent_for_runner as A3CAgent
+
+from l2rpn_baselines.Multithreading_agent import Runner
+from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+
+# import Runner
+# import Action_reduced_list
+# from ActorCritic_Agent import *
 
 def useful_state(obs,env):
     selected_obs = np.hstack((obs.topo_vect,obs.line_status)) #  should it not be nan for lines/gens that are disconnected ??
@@ -50,8 +52,14 @@ def evaluate(env,
         runner_params["verbose"] = True
 
     action_space_lists_data = kwargs["discrete_action_space"]
+    NeuralNets_dimensions = kwargs["trained_NeuralNets_dimensions"]
 
-    agent = A3CAgent.A3CAgent(env.action_space, state_size,action_size,env,action_space_lists=action_space_lists_data)
+    # for A3CAgent_for_runner file
+    # agent = A3CAgent(env.action_space, state_size,action_size,env,action_space_lists=action_space_lists_data)
+
+    # for ActorCritic_Agent.py file
+    agent = A3CAgent(state_size, action_size,env.name,env.action_space,env.backend.prod_pu_to_kv,action_space_lists_data,
+                            None,None,None,NeuralNets_dimensions,None,train_flag=False)
 
     # Print model summary
     agent.actor.summary()
@@ -77,6 +85,9 @@ if __name__ == "__main__":
     agent_nn_weights_name = "grid2op_14_a3c"
     name_of_RL_agent = "agent_1"
     max_steps_in_episode = 3000
+    Hyperparameters = {}
+    Hyperparameters["size_of_hidden_layer_1"] = 200
+    Hyperparameters["size_of_hidden_layer_2"] = 100
 
     # Create environment
     env = make("l2rpn_case14_sandbox",reward_class=L2RPNReward)
@@ -132,4 +143,5 @@ if __name__ == "__main__":
              verbose=True,
              save_gif=False,
              agent_name=name_of_RL_agent,
-             discrete_action_space=action_space_lists)
+             discrete_action_space=action_space_lists,
+             trained_NeuralNets_dimensions=Hyperparameters)
