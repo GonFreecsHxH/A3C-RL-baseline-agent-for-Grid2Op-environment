@@ -1,15 +1,22 @@
-import numpy as np
-import copy
-from grid2op.Parameters import Parameters
-from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
+try:
+    import numpy as np
+    import copy
+    from grid2op.Parameters import Parameters
+    from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
+    import sys
+    # import pytorch
+except:
+    print("You need the following package to train the A3C baseline")
+    print(sys.exc_info())
+    exit()
 
-from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-import l2rpn_baselines.Multithreading_agent.Action_reduced_list
-import l2rpn_baselines.Multithreading_agent.user_environment_make
+# from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+# import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+# import l2rpn_baselines.Multithreading_agent.user_environment_make
 
-# from ActorCritic_Agent import *
-# import Action_reduced_list
-# import user_environment_make
+from ActorCritic_Agent import *
+import Action_reduced_list
+import user_environment_make
 
 # This below function reduces the size of the state space.
 def useful_state(obs,value_multiplier):
@@ -96,10 +103,6 @@ def train(env,name,iterations,save_path,load_path,env_name,profiles_chronics,tim
 if __name__ == "__main__":
     # Name of the ".h5" files that stores the actor and critic neural network weights.
     name = "grid2op_14_a3c"
-    # Name of the Grid2Op environment to train the A3C RL agent on.
-    env_name = 'l2rpn_case14_sandbox'
-    # Location of the chronic files
-    profiles_chronics = r"C:\Users\kisha\data_grid2op\l2rpn_case14_sandbox\chronics"
     # Total number of episodes to train the A3C agent.
     EPISODES_train = 500
     # Maximum number of time steps or iterations taken in each episode during the training.
@@ -121,12 +124,19 @@ if __name__ == "__main__":
     Hyperparameters["size_of_hidden_layer_2"] = 100
 
     # Create the environment
-    env = user_environment_make.set_environement(None, env_name, profiles_chronics)
+    # env = user_environment_make.set_environement(None, env_name, profiles_chronics)
 
-    print("NOTE: PLEASE MAKE CHANGES TO THE FILE user_environment_make.py TO MODIFY YOUR ENVIRONMENT.")
+    # Name of the Grid2Op environment to train the A3C RL agent on.
+    env_name = 'l2rpn_case14_sandbox'
+    # Location of the chronic files. Change this to your chronics location.
+    profiles_chronics = r"C:\Users\kisha\data_grid2op\l2rpn_case14_sandbox\chronics"
+    print("_____________________________________________")
+    print("NOTE: PLEASE MAKE CHANGES TO THE FILE user_environment_make.py TO MAKE YOUR ENVIRONMENT. This "
+          "user_environment_make.py will be called wherever it is necessary when training the A3C agent")
+    print("_____________________________________________")
 
     # Train function that trains the A3C agent.
-    train(env=env,name=name,iterations=EPISODES_train,save_path=save_path,load_path=load_path,
+    train(env=None,name=name,iterations=EPISODES_train,save_path=save_path,load_path=load_path,
           env_name=env_name,profiles_chronics=profiles_chronics,time_step_end=time_step_end,
           Hyperparameters=Hyperparameters,Thread_count=Thread_count)
 

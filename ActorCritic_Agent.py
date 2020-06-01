@@ -1,27 +1,31 @@
-import grid2op
-import threading
-import numpy as np
-import time
-import json
-import copy
-import os
-from grid2op import make
-from grid2op.Agent import MLAgent
-from grid2op.Environment import Environment
-from grid2op.Parameters import Parameters
-from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
+try:
+    import grid2op
+    import threading
+    import numpy as np
+    import time
+    import json
+    import copy
+    import os
+    from grid2op import make
+    from grid2op.Agent import MLAgent
+    from grid2op.Environment import Environment
+    from grid2op.Parameters import Parameters
+    from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
 
-import tensorflow.compat.v1 as tf
-tf.disable_v2_behavior()
+    import tensorflow.compat.v1 as tf
+    tf.disable_v2_behavior()
 
-from tensorflow.keras.layers import Dense, Input
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-import tensorflow.python.keras.backend as K
+    from tensorflow.keras.layers import Dense, Input
+    from tensorflow.keras.models import Model
+    from tensorflow.keras.optimizers import Adam
+    import tensorflow.python.keras.backend as K
+except:
+    print("You need the following package to train the A3C baseline")
+    print(sys.exc_info())
+    exit()
 
-import l2rpn_baselines.Multithreading_agent.user_environment_make
-
-# import user_environment_make
+# import l2rpn_baselines.Multithreading_agent.user_environment_make
+import user_environment_make
 
 # Create the Agent instance here that can used with the Runner to test the performance of the trained RL agent.
 class A3CAgent(MLAgent):
