@@ -21,6 +21,7 @@ pip3 install -U .
 cd ..
 rm -rf l2rpn-baselines
 ```
+Note: l2rpn-baselines module will install all the required python modules needed to run this A3C agent.
 
 ## Usage
 Please check the train.py and evaluate.py for a working example.
