@@ -2,7 +2,8 @@
     "backend_type": "PandaPowerBackend_l2rpn_case14_sandbox_l2rpn_case14_sandbox",
     "chronics_max_timestep": "3000",
     "chronics_path": "C:\\Users\\kisha\\data_grid2op\\l2rpn_case14_sandbox\\chronics\\0000",
-    "cumulative_reward": 17106.8046875,
+    "cumulative_reward": 16761.828125,
+    "env_seed": null,
     "env_type": "Environment_l2rpn_case14_sandbox",
     "grid_path": "C:\\Users\\kisha\\data_grid2op\\l2rpn_case14_sandbox\\grid.json",
     "nb_timestep_played": 1091

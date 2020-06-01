@@ -3,14 +3,15 @@ from grid2op.Reward import L2RPNReward
 from grid2op.Reward import CombinedReward, CloseToOverflowReward, GameplayReward
 from grid2op.Observation import CompleteObservation
 import numpy as np
+import os
 
-from l2rpn_baselines.Multithreading_agent import Runner
-from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+# from l2rpn_baselines.Multithreading_agent import Runner
+# from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+# import l2rpn_baselines.Multithreading_agent.Action_reduced_list
 
-# import Runner
-# import Action_reduced_list
-# from ActorCritic_Agent import *
+import Runner
+import Action_reduced_list
+from ActorCritic_Agent import *
 
 def useful_state(obs,env):
     selected_obs = np.hstack((obs.topo_vect,obs.line_status)) #  should it not be nan for lines/gens that are disconnected ??
@@ -26,7 +27,7 @@ def useful_state(obs,env):
     return selected_obs
 
 def evaluate(env,
-                 load_path=".",
+                 load_path="",
                  logs_path=None,
                  nb_episode=1,
                  nb_process=None,
@@ -59,7 +60,7 @@ def evaluate(env,
 
     # for ActorCritic_Agent.py file
     agent = A3CAgent(state_size, action_size,env.name,env.action_space,env.backend.prod_pu_to_kv,action_space_lists_data,
-                            None,None,None,NeuralNets_dimensions,None,train_flag=False)
+                            None,None,None,NeuralNets_dimensions,None,train_flag=False,save_path=None)
 
     # Print model summary
     agent.actor.summary()
@@ -70,7 +71,7 @@ def evaluate(env,
 
     # Load the agent with trained neural network weights.
     try:
-        agent.load_model(nn_weight_name=load_path)
+        agent.load_model(nn_weight_name=kwargs["nn_file_name"], load_path=load_path)
         print("Loaded saved NN model parameters \n")
     except:
         print("Issue with loading the NN weights/No existing model is found or saved model sizes do not match. Exiting...\n")
@@ -88,6 +89,7 @@ if __name__ == "__main__":
     Hyperparameters = {}
     Hyperparameters["size_of_hidden_layer_1"] = 200
     Hyperparameters["size_of_hidden_layer_2"] = 100
+    load_path = os.path.join(os.getcwd(),"nn_weight_folder")
 
     # Create environment
     env = make("l2rpn_case14_sandbox",reward_class=L2RPNReward)
@@ -136,7 +138,7 @@ if __name__ == "__main__":
     print("Voltage controller class being used:", env.voltagecontrolerClass)
 
     evaluate(env=env,
-             load_path=agent_nn_weights_name,
+             load_path=load_path,
              logs_path=agent_log_path,
              nb_episode=NB_EPISODE,
              max_steps=max_steps_in_episode,
@@ -144,4 +146,5 @@ if __name__ == "__main__":
              save_gif=False,
              agent_name=name_of_RL_agent,
              discrete_action_space=action_space_lists,
-             trained_NeuralNets_dimensions=Hyperparameters)
+             trained_NeuralNets_dimensions=Hyperparameters,
+             nn_file_name=agent_nn_weights_name)

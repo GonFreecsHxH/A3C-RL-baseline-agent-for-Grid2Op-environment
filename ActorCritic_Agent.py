@@ -4,6 +4,7 @@ import numpy as np
 import time
 import json
 import copy
+import os
 from grid2op import make
 from grid2op.Agent import MLAgent
 from grid2op.Environment import Environment
@@ -18,12 +19,16 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 import tensorflow.python.keras.backend as K
 
+import l2rpn_baselines.Multithreading_agent.user_environment_make
+
+# import user_environment_make
+
 # Create the Agent instance here that can used with the Runner to test the performance of the trained RL agent.
 class A3CAgent(MLAgent):
     # first change: An Agent must derived from grid2op.Agent (in this case MLAgent, because we manipulate vector instead
     # of classes) We will use this template to create our desired ML agent with unique neural network configuration.
     def __init__(self, state_size, action_size, env_name, action_space, value_multiplier,action_space_lists,
-                 profiles_chronics,EPISODES_train2,time_step_end2,Hyperparameters,Thread_count,train_flag):
+                 profiles_chronics,EPISODES_train2,time_step_end2,Hyperparameters,Thread_count,train_flag,save_path):
         MLAgent.__init__(self, action_space)
         # Parameter settings.
         # NOTE: MAKE SURE THE FOLLOWING SETTINGS ARE SAME AS THE TRAINED AGENT OR THE WEIGHTS WONT LOAD SUCCESSFULLY.
@@ -40,6 +45,9 @@ class A3CAgent(MLAgent):
             self.critic_lr = Hyperparameters["critic_learning_rate"]
             self.discount_factor = Hyperparameters["discount_factor"]
             self.threads = Thread_count
+            self.save_path = os.path.abspath(save_path)
+            if not os.path.exists(self.save_path):
+                os.mkdir(self.save_path)
         else: #evaluating
             self.action_list = []
 
@@ -197,18 +205,18 @@ class A3CAgent(MLAgent):
             time.sleep(200) # main thread saves the model every 200 sec
             print("len(scores) = ", len(scores))
             if (len(scores)>10):
-                self.save_model(nn_weights_name)
+                self.save_model(nn_weights_name,self.save_path)
                 print("_______________________________________________________________________________________________________")
                 print("saved NN model at episode", episode, "\n")
                 print("_______________________________________________________________________________________________________")
 
-    def load_model(self, nn_weight_name):
-            self.actor.load_weights(nn_weight_name + "_actor.h5")
-            self.critic.load_weights(nn_weight_name + "_critic.h5")
+    def load_model(self, nn_weight_name, load_path):
+            self.actor.load_weights(os.path.join(load_path,nn_weight_name + "_actor.h5"))
+            self.critic.load_weights(os.path.join(load_path,nn_weight_name + "_critic.h5"))
 
-    def save_model(self, nn_weight_name):
-        self.actor.save_weights(nn_weight_name + "_actor.h5")
-        self.critic.save_weights(nn_weight_name + "_critic.h5")
+    def save_model(self, nn_weight_name, save_path):
+        self.actor.save_weights(os.path.join(save_path,nn_weight_name + "_actor.h5"))
+        self.critic.save_weights(os.path.join(save_path,nn_weight_name + "_critic.h5"))
 
 # This is Agent(local) class for threading
 class Agent(threading.Thread):
@@ -239,7 +247,7 @@ class Agent(threading.Thread):
     def run(self):
         global episode
         episode = 0
-        env = set_environement(self.index,self.env_name,self.profiles_chronics)
+        env = user_environment_make.set_environement(self.index,self.env_name,self.profiles_chronics)
         self.action_space = env.helper_action_player
         while episode < EPISODES_train:
             state = env.reset()
@@ -405,32 +413,32 @@ class Agent(threading.Thread):
         #     print("_______________________________________________________________________________________________________")
         return action
 
-def set_environement(start_id,env_name,profiles_chronics):
-    param = Parameters()
-    param.NO_OVERFLOW_DISCONNECTION = True
-
-    env = make(env_name,chronics_path= profiles_chronics, reward_class=CombinedReward,param=param)
-    # Register custom reward for training
-    cr = env.reward_helper.template_reward
-    cr.addReward("overflow", CloseToOverflowReward(), 50.0)
-    cr.addReward("game", GameplayReward(), 100.0)
-    cr.initialize(env)
-
-    # Debug prints
-    print("Debug prints --->:")
-    print("Chronics location that being used:", env.chronics_handler.path)
-    print("Grid location being used:", env.init_grid_path)
-    print("Reward class that is being used:", env.rewardClass)
-    print("Action type class being used:", env.actionClass)
-    print("Observation type class being used:", env.observationClass)
-    print("Backend CSV file key names:", env.names_chronics_to_backend)
-    print("Legal action class being used:", env.legalActClass)
-    print("Voltage controller class being used:", env.voltagecontrolerClass)
-
-    if start_id != None:
-        env.chronics_handler.tell_id(start_id)
-        print("Thread number:",start_id,", ID of chronic current folder:",env.chronics_handler.real_data.id_chron_folder_current)
-    return env
+# def set_environement(start_id,env_name,profiles_chronics):
+#     param = Parameters()
+#     param.NO_OVERFLOW_DISCONNECTION = True
+#
+#     env = make(env_name,chronics_path= profiles_chronics, reward_class=CombinedReward,param=param)
+#     # Register custom reward for training
+#     cr = env.reward_helper.template_reward
+#     cr.addReward("overflow", CloseToOverflowReward(), 50.0)
+#     cr.addReward("game", GameplayReward(), 100.0)
+#     cr.initialize(env)
+#
+#     # Debug prints
+#     print("Debug prints --->:")
+#     print("Chronics location that being used:", env.chronics_handler.path)
+#     print("Grid location being used:", env.init_grid_path)
+#     print("Reward class that is being used:", env.rewardClass)
+#     print("Action type class being used:", env.actionClass)
+#     print("Observation type class being used:", env.observationClass)
+#     print("Backend CSV file key names:", env.names_chronics_to_backend)
+#     print("Legal action class being used:", env.legalActClass)
+#     print("Voltage controller class being used:", env.voltagecontrolerClass)
+#
+#     if start_id != None:
+#         env.chronics_handler.tell_id(start_id)
+#         print("Thread number:",start_id,", ID of chronic current folder:",env.chronics_handler.real_data.id_chron_folder_current)
+#     return env
 
 # This below function reduces the size of the state space.
 def useful_state(obs,value_multiplier):
