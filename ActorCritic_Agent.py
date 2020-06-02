@@ -24,8 +24,8 @@ except:
     print(sys.exc_info())
     exit()
 
-# import l2rpn_baselines.Multithreading_agent.user_environment_make
-import user_environment_make
+import l2rpn_baselines.Multithreading_agent.user_environment_make
+# import user_environment_make
 
 # Create the Agent instance here that can used with the Runner to test the performance of the trained RL agent.
 class A3CAgent(MLAgent):

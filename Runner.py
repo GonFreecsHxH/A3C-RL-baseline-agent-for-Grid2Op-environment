@@ -1,7 +1,12 @@
 from grid2op.Runner import Runner
 from grid2op.Episode import EpisodeReplay
-import os
-import shutil
+try:
+    import os
+    import shutil
+except:
+    print("You need the following package to train the A3C baseline")
+    print(sys.exc_info())
+    exit()
 
 def run(runner_params_from_env,NB_EPISODE,agent_path,max_steps_in_episode,agent,gif_save,agent_name):
     # Build runner

@@ -5,13 +5,13 @@ from grid2op.Observation import CompleteObservation
 import numpy as np
 import os
 
-# from l2rpn_baselines.Multithreading_agent import Runner
-# from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-# import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+from l2rpn_baselines.Multithreading_agent import Runner
+from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+import l2rpn_baselines.Multithreading_agent.Action_reduced_list
 
-import Runner
-import Action_reduced_list
-from ActorCritic_Agent import *
+# import Runner
+# import Action_reduced_list
+# from ActorCritic_Agent import *
 
 def useful_state(obs,env):
     selected_obs = np.hstack((obs.topo_vect,obs.line_status)) #  should it not be nan for lines/gens that are disconnected ??

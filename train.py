@@ -10,13 +10,13 @@ except:
     print(sys.exc_info())
     exit()
 
-# from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-# import l2rpn_baselines.Multithreading_agent.Action_reduced_list
-# import l2rpn_baselines.Multithreading_agent.user_environment_make
+from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
+import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+import l2rpn_baselines.Multithreading_agent.user_environment_make
 
-from ActorCritic_Agent import *
-import Action_reduced_list
-import user_environment_make
+# from ActorCritic_Agent import *
+# import Action_reduced_list
+# import user_environment_make
 
 # This below function reduces the size of the state space.
 def useful_state(obs,value_multiplier):
