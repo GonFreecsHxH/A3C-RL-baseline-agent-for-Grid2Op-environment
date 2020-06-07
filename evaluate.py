@@ -1,13 +1,16 @@
-from grid2op import make
-from grid2op.Reward import L2RPNReward
-from grid2op.Reward import CombinedReward, CloseToOverflowReward, GameplayReward
-from grid2op.Observation import CompleteObservation
-import numpy as np
-import os
+try:
+    from grid2op import make
+    from grid2op.Reward import L2RPNReward
+    from grid2op.Reward import CombinedReward, CloseToOverflowReward, GameplayReward
+    from grid2op.Observation import CompleteObservation
+    import numpy as np
+    import os
 
-from l2rpn_baselines.Multithreading_agent import Runner
-from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-import l2rpn_baselines.Multithreading_agent.Action_reduced_list
+    from l2rpn_baselines.AsynchronousActorCritic.Runner import run
+    from l2rpn_baselines.AsynchronousActorCritic.AsynchronousActorCritic import A3CAgent
+    from l2rpn_baselines.AsynchronousActorCritic.Action_reduced_list import main_function
+except ImportError as exc_:
+    raise ImportError("AsynchronousActorCritic baseline impossible to load the required dependencies for testing the model. The error was: \n {}".format(exc_))
 
 # import Runner
 # import Action_reduced_list
@@ -78,7 +81,7 @@ def evaluate(env,
         exit()
 
     # Evaluate and print results and also save the gif if opted.
-    Runner.run(runner_params,nb_episode,logs_path,max_steps,agent,save_gif,agent_name)
+    run(runner_params,nb_episode,logs_path,max_steps,agent,save_gif,agent_name)
 if __name__ == "__main__":
 
     NB_EPISODE = 1
@@ -111,7 +114,7 @@ if __name__ == "__main__":
     # NOTE: Delete the .npy files if you are trying to solve for different bus system than previous solved power system
     # This code is implemented for a 14 bus system.
     # Reduce the action space and assign an index value to each unique possible action from the complete action space.
-    gen_action_list, load_action_list, line_or_action_list, line_ex_action_list = Action_reduced_list.main_function("14")
+    gen_action_list, load_action_list, line_or_action_list, line_ex_action_list = main_function("14")
     action_size = load_action_list.__len__()
     del env
 

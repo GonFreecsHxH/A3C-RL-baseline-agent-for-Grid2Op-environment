@@ -1,5 +1,7 @@
+import warnings
+
 __all__ = [
-    "ActorCritic_Agent",
+    "AsynchronousActorCritic",
     "evaluate",
     "train",
     "Action_reduced_list",
@@ -8,10 +10,21 @@ __all__ = [
     "user_environment_make"
 ]
 
-from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import ActorCritic_Agent
-from l2rpn_baselines.Multithreading_agent.evaluate import evaluate
-from l2rpn_baselines.Multithreading_agent.train import train
-from l2rpn_baselines.Multithreading_agent.Action_reduced_list import Action_reduced_list
-from l2rpn_baselines.Multithreading_agent.Runner import Runner
-from l2rpn_baselines.Multithreading_agent.run_grid2viz import run_grid2viz
-from l2rpn_baselines.Multithreading_agent.user_environment_make import user_environment_make
+from l2rpn_baselines.AsynchronousActorCritic.AsynchronousActorCritic import *
+from l2rpn_baselines.AsynchronousActorCritic.evaluate import evaluate
+
+try:
+    from l2rpn_baselines.AsynchronousActorCritic.train import train
+    __all__.append("train")
+except ImportError as exc_:
+    warnings.warn("AsynchronousActorCritic: impossible to load the \"train\" function because of missing dependencies. The error was: \n{}".format(exc_))
+
+try:
+    from l2rpn_baselines.AsynchronousActorCritic.Runner import Runner
+    __all__.append("Runner")
+except ImportError as exc_:
+    warnings.warn("AsynchronousActorCritic: impossible to load the \"Runner\" function because of missing dependencies. The error was: \n{}".format(exc_))
+
+# from l2rpn_baselines.AsynchronousActorCritic.Action_reduced_list import Action_reduced_list
+# from l2rpn_baselines.AsynchronousActorCritic.run_grid2viz import run_grid2viz
+# from l2rpn_baselines.AsynchronousActorCritic.user_environment_make import user_environment_make

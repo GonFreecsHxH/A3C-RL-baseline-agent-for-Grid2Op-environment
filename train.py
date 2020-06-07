@@ -1,18 +1,16 @@
 try:
     import numpy as np
     import copy
+    import os
     from grid2op.Parameters import Parameters
     from grid2op.Reward import L2RPNReward, CombinedReward, CloseToOverflowReward, GameplayReward
     import sys
+    from l2rpn_baselines.AsynchronousActorCritic.AsynchronousActorCritic import A3CAgent
+    from l2rpn_baselines.AsynchronousActorCritic.Action_reduced_list import main_function
+    from l2rpn_baselines.AsynchronousActorCritic.user_environment_make import set_environement
     # import pytorch
-except:
-    print("You need the following package to train the A3C baseline")
-    print(sys.exc_info())
-    exit()
-
-from l2rpn_baselines.Multithreading_agent.ActorCritic_Agent import *
-import l2rpn_baselines.Multithreading_agent.Action_reduced_list
-import l2rpn_baselines.Multithreading_agent.user_environment_make
+except ImportError as exc_:
+    raise ImportError("AsynchronousActorCritic baseline impossible to load the required dependencies for training the model. The error was: \n {}".format(exc_))
 
 # from ActorCritic_Agent import *
 # import Action_reduced_list
@@ -54,7 +52,7 @@ def train(env,name,iterations,save_path,load_path,env_name,profiles_chronics,tim
     # "each unique thread" to create duplicate multiple environments in parallel. By no means this is perfect but this
     # works and we recommend using MultiEnv class from Grid2Op for future implementations that uses multiple threads.
 
-    env_temp = user_environment_make.set_environement(None, env_name, profiles_chronics)
+    env_temp = set_environement(None, env_name, profiles_chronics)
 
     # Define the size of state space and action space.
     do_nothing_act = env_temp.helper_action_player({})
@@ -70,7 +68,7 @@ def train(env,name,iterations,save_path,load_path,env_name,profiles_chronics,tim
     # This code is implemented for a 14 bus system.
 
     # Reduce the action space and assign an index value to each unique possible action from the complete action space.
-    gen_action_list, load_action_list, line_or_action_list, line_ex_action_list = Action_reduced_list.main_function("14")
+    gen_action_list, load_action_list, line_or_action_list, line_ex_action_list = main_function("14")
     action_size = load_action_list.__len__()
     action_space = env_temp.action_space
     del env_temp

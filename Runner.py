@@ -1,12 +1,11 @@
-from grid2op.Runner import Runner
-from grid2op.Episode import EpisodeReplay
 try:
     import os
     import shutil
-except:
-    print("You need the following package to train the A3C baseline")
-    print(sys.exc_info())
-    exit()
+    from grid2op.Runner import Runner
+    from grid2op.Episode import EpisodeReplay
+except ImportError as exc_:
+    raise ImportError("AsynchronousActorCritic baseline impossible to load the required dependencies for testing the model. The error was: \n {}".format(exc_))
+
 
 def run(runner_params_from_env,NB_EPISODE,agent_path,max_steps_in_episode,agent,gif_save,agent_name):
     # Build runner

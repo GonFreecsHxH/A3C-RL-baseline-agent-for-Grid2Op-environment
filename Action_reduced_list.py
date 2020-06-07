@@ -9,10 +9,9 @@ try:
     from grid2op.MakeEnv import make
     import itertools
     import os.path
-except:
-    print("You need the following package to train the A3C baseline")
-    print(sys.exc_info())
-    exit()
+except ImportError as exc_:
+    raise ImportError("AsynchronousActorCritic baseline impossible to load the required dependencies. The error was: \n {}".format(exc_))
+
 
 def prune_action_space(bus_no):
     # Initialize the env."case5_example",chronics_path=os.path.join("public_data", "chronics_5bus_example")
