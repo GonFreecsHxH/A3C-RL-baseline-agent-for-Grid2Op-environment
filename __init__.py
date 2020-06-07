@@ -24,7 +24,3 @@ try:
     __all__.append("Runner")
 except ImportError as exc_:
     warnings.warn("AsynchronousActorCritic: impossible to load the \"Runner\" function because of missing dependencies. The error was: \n{}".format(exc_))
-
-# from l2rpn_baselines.AsynchronousActorCritic.Action_reduced_list import Action_reduced_list
-# from l2rpn_baselines.AsynchronousActorCritic.run_grid2viz import run_grid2viz
-# from l2rpn_baselines.AsynchronousActorCritic.user_environment_make import user_environment_make
